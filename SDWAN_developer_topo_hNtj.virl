@@ -1,0 +1,1115 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<topology xmlns="http://www.cisco.com/VIRL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" schemaVersion="0.95" xsi:schemaLocation="http://www.cisco.com/VIRL https://raw.github.com/CiscoVIRL/schema/v0.95/virl.xsd">
+    <extensions>
+        <entry key="management_network" type="String">exclusive</entry>
+    </extensions>
+    <node name="internet" type="SIMPLE" subtype="CSR1000v" location="500,64" vmImage="CSR1000v-Fuji-16.9.4 [2e3611f8-3674-47e9-8582-d2ef19dffbe0]" vmFlavor="CSR1000v [64bea064-3e87-4a42-aa67-486a0254fca7]">
+        <extensions>
+            <entry key="ansible_group" type="String">virl_node</entry>
+            <entry key="config" type="String">!
+! Last configuration change at 20:42:36 UTC Sat Mar 7 2020
+!
+version 16.9
+service timestamps debug datetime msec
+service timestamps log datetime msec
+! Call-home is enabled by Smart-Licensing.
+service call-home
+platform qfp utilization monitor load 80
+no platform punt-keepalive disable-kernel-core
+platform console serial
+!
+hostname internet
+!
+boot-start-marker
+boot-end-marker
+!
+!
+vrf definition Mgmt-intf
+ !
+ address-family ipv4
+ exit-address-family
+ !
+ address-family ipv6
+ exit-address-family
+!
+enable secret 5 $1$5H7y$2lXFCneINe2y9SNNQbN6p.
+!
+no aaa new-model
+call-home
+ ! If contact email address in call-home is configured as sch-smart-licensing@cisco.com
+ ! the email address configured in Cisco Smart License Portal will be used as contact email address to send SCH notifications.
+ contact-email-addr sch-smart-licensing@cisco.com
+ profile "CiscoTAC-1"
+  active
+  destination transport-method http
+  no destination transport-method email
+!
+!
+!
+!
+!
+!
+!
+ip domain name virl.local
+ip admission watch-list expiry-time 0
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+! 
+! 
+! 
+! 
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+crypto pki trustpoint TP-self-signed-3689533999
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-3689533999
+ revocation-check none
+ rsakeypair TP-self-signed-3689533999
+!
+crypto pki trustpoint SLA-TrustPoint
+ enrollment pkcs12
+ revocation-check crl
+!
+!
+crypto pki certificate chain TP-self-signed-3689533999
+ certificate self-signed 01 nvram:IOS-Self-Sig#1.cer
+crypto pki certificate chain SLA-TrustPoint
+ certificate ca 01 nvram:CiscoLicensi#1CA.cer
+!
+!
+!
+!
+!
+!
+!
+!
+license udi pid CSR1000V sn 99NSSNZ7SIY
+license smart enable
+diagnostic bootup level minimal
+!
+spanning-tree extend system-id
+!
+!
+!
+username cisco privilege 15 secret 5 $1$RBZT$hPoLBI5fTNQwRw8Vy1qcS1
+username admin privilege 15 secret 5 $1$jjwM$mpARKDyo0s4gN7jO3lo0l.
+!
+redundancy
+!
+!
+!
+!
+!
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+! 
+! 
+!
+!
+interface GigabitEthernet1
+ vrf forwarding Mgmt-intf
+ ip address dhcp
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+interface GigabitEthernet2
+ ip address 172.20.0.5 255.255.255.252
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+interface GigabitEthernet3
+ ip address 172.20.0.9 255.255.255.252
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+interface GigabitEthernet4
+ ip address 172.20.0.13 255.255.255.252
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+interface GigabitEthernet5
+ ip address 172.20.0.17 255.255.255.252
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+router bgp 65000
+ bgp router-id 209.51.164.17
+ bgp log-neighbor-changes
+ neighbor 172.20.0.6 remote-as 65001
+ neighbor 172.20.0.18 remote-as 65002
+ !
+ address-family ipv4
+  network 0.0.0.0
+  network 172.20.0.4 mask 255.255.255.252
+  network 172.20.0.8 mask 255.255.255.252
+  network 172.20.0.12 mask 255.255.255.252
+  network 172.20.0.16 mask 255.255.255.252
+  network 172.20.0.20 mask 255.255.255.252
+  neighbor 172.20.0.6 activate
+  neighbor 172.20.0.18 activate
+ exit-address-family
+!
+ip forward-protocol nd
+ip http server
+ip http authentication local
+ip http secure-server
+ip route 0.0.0.0 0.0.0.0 Null0
+!
+!
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+line con 0
+ stopbits 1
+line vty 0 4
+ login local
+ transport input ssh
+!
+ntp server 192.5.41.40
+ntp server 192.5.41.41
+!
+!
+!
+!
+!
+end
+
+</entry>
+        </extensions>
+        <interface id="0" name="GigabitEthernet2"/>
+        <interface id="1" name="GigabitEthernet3"/>
+        <interface id="2" name="GigabitEthernet4"/>
+        <interface id="3" name="GigabitEthernet5"/>
+        <interface id="4" name="GigabitEthernet6"/>
+    </node>
+    <node name="sp" type="SIMPLE" subtype="CSR1000v" location="337,83" vmImage="CSR1000v-Fuji-16.9.4 [2e3611f8-3674-47e9-8582-d2ef19dffbe0]" vmFlavor="CSR1000v [64bea064-3e87-4a42-aa67-486a0254fca7]">
+        <extensions>
+            <entry key="ansible_group" type="String">virl_node</entry>
+            <entry key="config" type="String">!
+! Last configuration change at 20:42:35 UTC Sat Mar 7 2020
+!
+version 16.9
+service timestamps debug datetime msec
+service timestamps log datetime msec
+! Call-home is enabled by Smart-Licensing.
+service call-home
+platform qfp utilization monitor load 80
+no platform punt-keepalive disable-kernel-core
+platform console serial
+!
+hostname sp
+!
+boot-start-marker
+boot-end-marker
+!
+!
+vrf definition Mgmt-intf
+ !
+ address-family ipv4
+ exit-address-family
+ !
+ address-family ipv6
+ exit-address-family
+!
+enable secret 5 $1$W16/$Gcl5h1YwaV3flCyEbqa5f/
+!
+no aaa new-model
+call-home
+ ! If contact email address in call-home is configured as sch-smart-licensing@cisco.com
+ ! the email address configured in Cisco Smart License Portal will be used as contact email address to send SCH notifications.
+ contact-email-addr sch-smart-licensing@cisco.com
+ profile "CiscoTAC-1"
+  active
+  destination transport-method http
+  no destination transport-method email
+!
+!
+!
+!
+!
+!
+!
+ip domain name virl.local
+ip admission watch-list expiry-time 0
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+! 
+! 
+! 
+! 
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+crypto pki trustpoint TP-self-signed-3532429573
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-3532429573
+ revocation-check none
+ rsakeypair TP-self-signed-3532429573
+!
+crypto pki trustpoint SLA-TrustPoint
+ enrollment pkcs12
+ revocation-check crl
+!
+!
+crypto pki certificate chain TP-self-signed-3532429573
+ certificate self-signed 01 nvram:IOS-Self-Sig#1.cer
+crypto pki certificate chain SLA-TrustPoint
+ certificate ca 01 nvram:CiscoLicensi#1CA.cer
+!
+!
+!
+!
+!
+!
+!
+!
+license udi pid CSR1000V sn 9OB4VZ7LXEZ
+license smart enable
+diagnostic bootup level minimal
+!
+spanning-tree extend system-id
+!
+!
+!
+username cisco privilege 15 secret 5 $1$C/xY$GoI7RbbEML6aBWlRKAV1c0
+username admin privilege 15 secret 5 $1$7cIn$6BzgsipFlSvD3egbVbzFQ/
+!
+redundancy
+!
+!
+!
+!
+!
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+! 
+! 
+!
+!
+interface GigabitEthernet1
+ vrf forwarding Mgmt-intf
+ ip address dhcp
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+interface GigabitEthernet2
+ ip address 172.20.0.18 255.255.255.252
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+interface GigabitEthernet3
+ ip address 10.100.1.1 255.255.255.0
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+router bgp 65002
+ bgp router-id 172.20.0.18
+ bgp log-neighbor-changes
+ neighbor 172.20.0.17 remote-as 65000
+ !
+ address-family ipv4
+  network 10.100.0.0 mask 255.255.0.0
+  neighbor 172.20.0.17 activate
+ exit-address-family
+!
+ip forward-protocol nd
+ip http server
+ip http authentication local
+ip http secure-server
+ip route 10.100.0.0 255.255.0.0 Null0
+!
+!
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+line con 0
+ stopbits 1
+line vty 0 4
+ login local
+ transport input ssh
+!
+ntp server 192.5.41.40
+ntp server 192.5.41.41
+!
+!
+!
+!
+!
+end
+
+</entry>
+        </extensions>
+        <interface id="0" name="GigabitEthernet2"/>
+        <interface id="1" name="GigabitEthernet3"/>
+    </node>
+    <node name="hq" type="SIMPLE" subtype="CSR1000v" location="650,209" vmImage="CSR1000v-Fuji-16.9.4 [2e3611f8-3674-47e9-8582-d2ef19dffbe0]" vmFlavor="CSR1000v [64bea064-3e87-4a42-aa67-486a0254fca7]" excludeFromLaunch="true">
+        <extensions>
+            <entry key="ansible_group" type="String">virl_node</entry>
+            <entry key="config" type="String">!
+! Last configuration change at 20:42:36 UTC Sat Mar 7 2020
+!
+version 16.9
+service timestamps debug datetime msec
+service timestamps log datetime msec
+! Call-home is enabled by Smart-Licensing.
+service call-home
+platform qfp utilization monitor load 80
+no platform punt-keepalive disable-kernel-core
+platform console serial
+!
+hostname hq
+!
+boot-start-marker
+boot-end-marker
+!
+!
+vrf definition Mgmt-intf
+ !
+ address-family ipv4
+ exit-address-family
+ !
+ address-family ipv6
+ exit-address-family
+!
+enable secret 5 $1$wFDh$SiPTUoqR.c6hvCpMAbRop1
+!
+no aaa new-model
+call-home
+ ! If contact email address in call-home is configured as sch-smart-licensing@cisco.com
+ ! the email address configured in Cisco Smart License Portal will be used as contact email address to send SCH notifications.
+ contact-email-addr sch-smart-licensing@cisco.com
+ profile "CiscoTAC-1"
+  active
+  destination transport-method http
+  no destination transport-method email
+!
+!
+!
+!
+!
+!
+!
+ip domain name virl.local
+ip admission watch-list expiry-time 0
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+! 
+! 
+! 
+! 
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+crypto pki trustpoint TP-self-signed-2594092639
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-2594092639
+ revocation-check none
+ rsakeypair TP-self-signed-2594092639
+!
+crypto pki trustpoint SLA-TrustPoint
+ enrollment pkcs12
+ revocation-check crl
+!
+!
+crypto pki certificate chain TP-self-signed-2594092639
+ certificate self-signed 01 nvram:IOS-Self-Sig#1.cer
+crypto pki certificate chain SLA-TrustPoint
+ certificate ca 01 nvram:CiscoLicensi#1CA.cer
+!
+!
+!
+!
+!
+!
+!
+!
+license udi pid CSR1000V sn 9QHV7ONOE08
+license smart enable
+diagnostic bootup level minimal
+!
+spanning-tree extend system-id
+!
+!
+!
+username cisco privilege 15 secret 5 $1$1gRF$ih68eIL3lHivEwY5qjChr/
+username admin privilege 15 secret 5 $1$Smo1$DaX9XD6HIEh1hG0pu4kML/
+!
+redundancy
+!
+!
+!
+!
+!
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+! 
+! 
+!
+!
+interface GigabitEthernet1
+ description OOB Management
+ vrf forwarding Mgmt-intf
+ ip address dhcp
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+interface GigabitEthernet2
+ description Internet
+ ip address 172.20.0.6 255.255.255.252
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+interface GigabitEthernet3
+ description DMZ
+ ip address 10.0.0.1 255.255.255.0
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+interface GigabitEthernet4
+ description DC Core
+ ip address 10.0.255.1 255.255.255.252
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+router ospf 65001
+ router-id 10.0.255.1
+ network 10.0.255.0 0.0.0.3 area 0
+ default-information originate
+!
+router bgp 65001
+ bgp router-id 172.20.0.6
+ bgp log-neighbor-changes
+ neighbor 172.20.0.5 remote-as 65000
+ !
+ address-family ipv4
+  network 10.0.0.0 mask 255.255.0.0
+  neighbor 172.20.0.5 activate
+ exit-address-family
+!
+ip forward-protocol nd
+ip http server
+ip http authentication local
+ip http secure-server
+ip route 10.0.0.0 255.255.0.0 Null0
+!
+!
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+line con 0
+ stopbits 1
+line vty 0 4
+ login local
+ transport input ssh
+!
+ntp server 192.5.41.40
+ntp server 192.5.41.41
+!
+!
+!
+!
+!
+end
+
+</entry>
+        </extensions>
+        <interface id="0" name="GigabitEthernet2"/>
+        <interface id="1" name="GigabitEthernet3"/>
+        <interface id="2" name="GigabitEthernet4"/>
+    </node>
+    <node name="core" type="SIMPLE" subtype="CSR1000v" location="384,194" vmImage="CSR1000v-Fuji-16.9.4 [2e3611f8-3674-47e9-8582-d2ef19dffbe0]" vmFlavor="CSR1000v [64bea064-3e87-4a42-aa67-486a0254fca7]">
+        <extensions>
+            <entry key="ansible_group" type="String">virl_node</entry>
+            <entry key="config" type="String">!
+! Last configuration change at 20:42:35 UTC Sat Mar 7 2020
+!
+version 16.9
+service timestamps debug datetime msec
+service timestamps log datetime msec
+! Call-home is enabled by Smart-Licensing.
+service call-home
+platform qfp utilization monitor load 80
+no platform punt-keepalive disable-kernel-core
+platform console serial
+!
+hostname core
+!
+boot-start-marker
+boot-end-marker
+!
+!
+vrf definition Mgmt-intf
+ !
+ address-family ipv4
+ exit-address-family
+ !
+ address-family ipv6
+ exit-address-family
+!
+enable secret 5 $1$LE5J$CjoY9whDGgbSMBvFTSvQ30
+!
+no aaa new-model
+call-home
+ ! If contact email address in call-home is configured as sch-smart-licensing@cisco.com
+ ! the email address configured in Cisco Smart License Portal will be used as contact email address to send SCH notifications.
+ contact-email-addr sch-smart-licensing@cisco.com
+ profile "CiscoTAC-1"
+  active
+  destination transport-method http
+  no destination transport-method email
+!
+!
+!
+!
+!
+!
+!
+ip domain name virl.local
+ip admission watch-list expiry-time 0
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+! 
+! 
+! 
+! 
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+crypto pki trustpoint TP-self-signed-2563230462
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-2563230462
+ revocation-check none
+ rsakeypair TP-self-signed-2563230462
+!
+crypto pki trustpoint SLA-TrustPoint
+ enrollment pkcs12
+ revocation-check crl
+!
+!
+crypto pki certificate chain TP-self-signed-2563230462
+ certificate self-signed 01 nvram:IOS-Self-Sig#1.cer
+crypto pki certificate chain SLA-TrustPoint
+ certificate ca 01 nvram:CiscoLicensi#1CA.cer
+!
+!
+!
+!
+!
+!
+!
+!
+license udi pid CSR1000V sn 9R6B50UTSU1
+license smart enable
+diagnostic bootup level minimal
+!
+spanning-tree extend system-id
+!
+!
+!
+username cisco privilege 15 secret 5 $1$L7dE$zboFrC1KuEJDaNX5MEhlU1
+username admin privilege 15 secret 5 $1$FPAo$La0OEquiIAgP0BGuXGEyp1
+!
+redundancy
+!
+!
+!
+!
+!
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+! 
+! 
+!
+!
+interface GigabitEthernet1
+ description OOB Management
+ vrf forwarding Mgmt-intf
+ ip address dhcp
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+interface GigabitEthernet2
+ description DC Border
+ ip address 10.0.255.2 255.255.255.252
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+interface GigabitEthernet3
+ description DC LAN
+ ip address 10.0.1.1 255.255.255.0
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+interface GigabitEthernet4
+ description vEdge HQ
+ ip address 10.0.255.5 255.255.255.252
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+router ospf 65001
+ router-id 10.0.255.5
+ network 10.0.1.0 0.0.0.255 area 0
+ network 10.0.255.0 0.0.0.3 area 0
+ network 10.0.255.4 0.0.0.3 area 0
+!
+ip forward-protocol nd
+ip http server
+ip http authentication local
+ip http secure-server
+!
+!
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+line con 0
+ stopbits 1
+line vty 0 4
+ login local
+ transport input ssh
+!
+ntp server 192.5.41.40
+ntp server 192.5.41.41
+!
+!
+!
+!
+!
+end
+
+</entry>
+        </extensions>
+        <interface id="0" name="GigabitEthernet2"/>
+        <interface id="1" name="GigabitEthernet3"/>
+        <interface id="2" name="GigabitEthernet4"/>
+    </node>
+    <node name="host1" type="SIMPLE" subtype="lxc-iperf" location="829,284">
+        <extensions>
+            <entry key="ansible_group" type="String">virl_node</entry>
+            <entry key="config" type="String">#cloud-config
+bootcmd:
+- ln -s -t /etc/rc.d /etc/rc.local
+hostname: host1
+manage_etc_hosts: true
+runcmd:
+- systemctl start rc-local
+- sed -i '/^\s*PasswordAuthentication\s\+no/d' /etc/ssh/sshd_config
+- echo "UseDNS no" &gt;&gt; /etc/ssh/sshd_config
+- service ssh restart
+- service sshd restart
+users:
+- default
+- gecos: User configured by VIRL Configuration Engine 0.23.10
+  lock-passwd: false
+  name: admin
+  plain-text-passwd: admin
+  shell: /bin/bash
+  ssh-authorized-keys:
+  - VIRL-USER-SSH-PUBLIC-KEY
+  sudo: ALL=(ALL) ALL
+write_files:
+- path: /etc/systemd/system/dhclient@.service
+  content: |
+    [Unit]
+    Description=Run dhclient on %i interface
+    After=network.target
+    [Service]
+    Type=oneshot
+    ExecStart=/sbin/dhclient %i -pf /var/run/dhclient.%i.pid -lf /var/lib/dhclient/dhclient.%i.lease
+    RemainAfterExit=yes
+  owner: root:root
+  permissions: '0644'
+- path: /etc/rc.local
+  owner: root:root
+  permissions: '0755'
+  content: |-
+    #!/bin/sh
+    ip address add 192.168.1.10/24 dev eth1
+    ip route add 10.0.0.0/16 via 192.168.1.1
+    ip route add 10.100.0.0/16 via 192.168.1.1
+    ip route add 172.20.0.0/16 via 192.168.1.1
+    ip route add 192.168.0.0/16 via 192.168.1.1
+    exit 0</entry>
+        </extensions>
+        <interface id="0" name="eth1"/>
+    </node>
+    <node name="vedge1" type="SIMPLE" subtype="vEdge" location="807,122">
+        <extensions>
+            <entry key="ansible_group" type="String">virl_node</entry>
+        </extensions>
+        <interface id="0" name="ge0/0"/>
+        <interface id="1" name="ge0/1"/>
+    </node>
+    <node name="vedge-hq" type="SIMPLE" subtype="vEdge" location="384,370">
+        <extensions>
+            <entry key="ansible_group" type="String">virl_node</entry>
+        </extensions>
+        <interface id="0" name="ge0/0"/>
+        <interface id="1" name="ge0/1"/>
+    </node>
+    <node name="vmanage1" type="SIMPLE" subtype="vManage" location="564,425">
+        <extensions>
+            <entry key="ansible_group" type="String">virl_node</entry>
+            <entry key="config" type="String">Content-Type: multipart/mixed; boundary="===============6560338015520979320=="
+MIME-Version: 1.0
+
+--===============6560338015520979320==
+Content-Type: text/cloud-config; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename="vedge.cloud-config"
+
+#cloud-config
+vinitparam:
+ - format-partition : 1
+
+--===============6560338015520979320==
+Content-Type: text/cloud-boothook; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename="vedge.init-config"
+
+#cloud-boothook
+
+vpn 0
+ no interface eth0
+
+vpn 512
+ interface eth0
+  ip dhcp-client
+  no shutdown
+ !
+ --===============6560338015520979320==--</entry>
+        </extensions>
+        <interface id="0" name="eth1"/>
+    </node>
+    <node name="vsmart1" type="SIMPLE" subtype="vSmart" location="826,370">
+        <extensions>
+            <entry key="ansible_group" type="String">virl_node</entry>
+        </extensions>
+        <interface id="0" name="eth1"/>
+    </node>
+    <node name="vbond1" type="SIMPLE" subtype="vBond" location="711,447">
+        <extensions>
+            <entry key="ansible_group" type="String">virl_node</entry>
+        </extensions>
+        <interface id="0" name="eth1"/>
+    </node>
+    <node name="server1" type="SIMPLE" subtype="lxc-iperf" location="97,199">
+        <extensions>
+            <entry key="ansible_group" type="String">virl_node</entry>
+            <entry key="config" type="String">#cloud-config
+bootcmd:
+- ln -s -t /etc/rc.d /etc/rc.local
+hostname: server1
+manage_etc_hosts: true
+runcmd:
+- systemctl start rc-local
+- sed -i '/^\s*PasswordAuthentication\s\+no/d' /etc/ssh/sshd_config
+- echo "UseDNS no" &gt;&gt; /etc/ssh/sshd_config
+- service ssh restart
+- service sshd restart
+users:
+- default
+- gecos: User configured by VIRL Configuration Engine 0.23.10
+  lock-passwd: false
+  name: admin
+  plain-text-passwd: admin
+  shell: /bin/bash
+  ssh-authorized-keys:
+  - VIRL-USER-SSH-PUBLIC-KEY
+  sudo: ALL=(ALL) ALL
+write_files:
+- path: /etc/systemd/system/dhclient@.service
+  content: |
+    [Unit]
+    Description=Run dhclient on %i interface
+    After=network.target
+    [Service]
+    Type=oneshot
+    ExecStart=/sbin/dhclient %i -pf /var/run/dhclient.%i.pid -lf /var/lib/dhclient/dhclient.%i.lease
+    RemainAfterExit=yes
+  owner: root:root
+  permissions: '0644'
+- path: /etc/rc.local
+  owner: root:root
+  permissions: '0755'
+  content: |-
+    #!/bin/sh
+    ip address add 10.0.1.10/24 dev eth1
+    ip route add 10.0.0.0/16 via 10.0.1.1
+    ip route add 10.100.0.0/16 via 192.168.1.1
+    ip route add 172.20.0.0/16 via 10.0.1.1
+    ip route add 192.168.0.0/16 via 10.0.1.1
+    exit 0</entry>
+        </extensions>
+        <interface id="0" name="eth1"/>
+    </node>
+    <node name="service1" type="SIMPLE" subtype="lxc-iperf" location="94,81">
+        <extensions>
+            <entry key="ansible_group" type="String">virl_node</entry>
+            <entry key="config" type="String">#cloud-config
+bootcmd:
+- ln -s -t /etc/rc.d /etc/rc.local
+hostname: service1
+manage_etc_hosts: true
+runcmd:
+- systemctl start rc-local
+- sed -i '/^\s*PasswordAuthentication\s\+no/d' /etc/ssh/sshd_config
+- echo "UseDNS no" &gt;&gt; /etc/ssh/sshd_config
+- service ssh restart
+- service sshd restart
+users:
+- default
+- gecos: User configured by VIRL Configuration Engine 0.23.10
+  lock-passwd: false
+  name: admin
+  plain-text-passwd: admin
+  shell: /bin/bash
+  ssh-authorized-keys:
+  - VIRL-USER-SSH-PUBLIC-KEY
+  sudo: ALL=(ALL) ALL
+write_files:
+- path: /etc/systemd/system/dhclient@.service
+  content: |
+    [Unit]
+    Description=Run dhclient on %i interface
+    After=network.target
+    [Service]
+    Type=oneshot
+    ExecStart=/sbin/dhclient %i -pf /var/run/dhclient.%i.pid -lf /var/lib/dhclient/dhclient.%i.lease
+    RemainAfterExit=yes
+  owner: root:root
+  permissions: '0644'
+- path: /etc/rc.local
+  owner: root:root
+  permissions: '0755'
+  content: |-
+    #!/bin/sh
+    ip address add 10.100.1.10/24 dev eth1
+    ip route add 10.0.0.0/16 via 10.100.1.1
+    ip route add 10.100.0.0/16 via 192.168.1.1
+    ip route add 172.20.0.0/16 via 10.100.1.1
+    ip route add 192.168.0.0/16 via 10.100.1.1
+    exit 0</entry>
+        </extensions>
+        <interface id="0" name="eth1"/>
+    </node>
+    <node name="hq-wan" type="SIMPLE" subtype="Unmanaged Switch" location="703,140">
+        <interface id="0" name="link0"/>
+        <interface id="1" name="link1"/>
+    </node>
+    <node name="site1-wan" type="SIMPLE" subtype="Unmanaged Switch" location="783,49">
+        <interface id="0" name="link0"/>
+        <interface id="1" name="link1"/>
+    </node>
+    <node name="site2-wan" type="SIMPLE" subtype="Unmanaged Switch" location="502,-9">
+        <interface id="0" name="link0"/>
+    </node>
+    <node name="sp1-wan" type="SIMPLE" subtype="Unmanaged Switch" location="426,88">
+        <interface id="0" name="link0"/>
+        <interface id="1" name="link1"/>
+    </node>
+    <node name="sp1-lan" type="SIMPLE" subtype="Unmanaged Switch" location="225,78">
+        <interface id="0" name="link0"/>
+        <interface id="1" name="link1"/>
+    </node>
+    <node name="hq-dmz" type="SIMPLE" subtype="Unmanaged Switch" location="669,353">
+        <interface id="0" name="link0"/>
+        <interface id="1" name="link1"/>
+        <interface id="2" name="link2"/>
+        <interface id="3" name="link3"/>
+        <interface id="4" name="link4"/>
+    </node>
+    <node name="dc-core" type="SIMPLE" subtype="Unmanaged Switch" location="488,200">
+        <interface id="0" name="link0"/>
+        <interface id="1" name="link1"/>
+    </node>
+    <node name="dc-lan" type="SIMPLE" subtype="Unmanaged Switch" location="235,200">
+        <interface id="0" name="link0"/>
+        <interface id="1" name="link1"/>
+    </node>
+    <node name="dc-vedge" type="SIMPLE" subtype="Unmanaged Switch" location="383,283">
+        <interface id="0" name="link0"/>
+        <interface id="1" name="link1"/>
+    </node>
+    <node name="site1-lan" type="SIMPLE" subtype="Unmanaged Switch" location="815,200">
+        <interface id="0" name="link0"/>
+        <interface id="1" name="link1"/>
+    </node>
+    <node name="flat-1" type="ASSET" subtype="FLAT" location="669,1">
+        <interface id="0" name="link0"/>
+    </node>
+    <annotations/>
+    <connection dst="/virl:topology/virl:node[13]/virl:interface[1]" src="/virl:topology/virl:node[1]/virl:interface[1]"/>
+    <connection dst="/virl:topology/virl:node[13]/virl:interface[2]" src="/virl:topology/virl:node[3]/virl:interface[1]"/>
+    <connection dst="/virl:topology/virl:node[14]/virl:interface[1]" src="/virl:topology/virl:node[1]/virl:interface[2]"/>
+    <connection dst="/virl:topology/virl:node[14]/virl:interface[2]" src="/virl:topology/virl:node[6]/virl:interface[1]"/>
+    <connection dst="/virl:topology/virl:node[15]/virl:interface[1]" src="/virl:topology/virl:node[1]/virl:interface[3]"/>
+    <connection dst="/virl:topology/virl:node[16]/virl:interface[1]" src="/virl:topology/virl:node[1]/virl:interface[4]"/>
+    <connection dst="/virl:topology/virl:node[16]/virl:interface[2]" src="/virl:topology/virl:node[2]/virl:interface[1]"/>
+    <connection dst="/virl:topology/virl:node[17]/virl:interface[1]" src="/virl:topology/virl:node[2]/virl:interface[2]"/>
+    <connection dst="/virl:topology/virl:node[17]/virl:interface[2]" src="/virl:topology/virl:node[12]/virl:interface[1]"/>
+    <connection dst="/virl:topology/virl:node[18]/virl:interface[1]" src="/virl:topology/virl:node[3]/virl:interface[2]"/>
+    <connection dst="/virl:topology/virl:node[18]/virl:interface[2]" src="/virl:topology/virl:node[7]/virl:interface[1]"/>
+    <connection dst="/virl:topology/virl:node[18]/virl:interface[3]" src="/virl:topology/virl:node[8]/virl:interface[1]"/>
+    <connection dst="/virl:topology/virl:node[18]/virl:interface[4]" src="/virl:topology/virl:node[9]/virl:interface[1]"/>
+    <connection dst="/virl:topology/virl:node[18]/virl:interface[5]" src="/virl:topology/virl:node[10]/virl:interface[1]"/>
+    <connection dst="/virl:topology/virl:node[19]/virl:interface[1]" src="/virl:topology/virl:node[3]/virl:interface[3]"/>
+    <connection dst="/virl:topology/virl:node[19]/virl:interface[2]" src="/virl:topology/virl:node[4]/virl:interface[1]"/>
+    <connection dst="/virl:topology/virl:node[20]/virl:interface[1]" src="/virl:topology/virl:node[4]/virl:interface[2]"/>
+    <connection dst="/virl:topology/virl:node[20]/virl:interface[2]" src="/virl:topology/virl:node[11]/virl:interface[1]"/>
+    <connection dst="/virl:topology/virl:node[21]/virl:interface[1]" src="/virl:topology/virl:node[4]/virl:interface[3]"/>
+    <connection dst="/virl:topology/virl:node[21]/virl:interface[2]" src="/virl:topology/virl:node[7]/virl:interface[2]"/>
+    <connection dst="/virl:topology/virl:node[22]/virl:interface[1]" src="/virl:topology/virl:node[5]/virl:interface[1]"/>
+    <connection dst="/virl:topology/virl:node[22]/virl:interface[2]" src="/virl:topology/virl:node[6]/virl:interface[2]"/>
+    <connection dst="/virl:topology/virl:node[23]/virl:interface[1]" src="/virl:topology/virl:node[1]/virl:interface[5]"/>
+</topology>

@@ -1,0 +1,1113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<topology xmlns="http://www.cisco.com/VIRL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" schemaVersion="0.95" xsi:schemaLocation="http://www.cisco.com/VIRL https://raw.github.com/CiscoVIRL/schema/v0.95/virl.xsd">
+    <extensions>
+        <entry key="AutoNetkit.enable_routing" type="Boolean">false</entry>
+    </extensions>
+    <node name="HUB1" type="SIMPLE" subtype="CSR1000v" location="455,62" ipv4="192.168.0.1">
+        <extensions>
+            <entry key="AutoNetkit.mgmt_ip" type="string"></entry>
+            <entry key="config" type="String">!
+! Last configuration change at 23:47:15 UTC Tue Jun 9 2020 by cisco
+!
+version 16.9
+service timestamps debug datetime msec
+service timestamps log datetime msec
+platform qfp utilization monitor load 80
+no platform punt-keepalive disable-kernel-core
+platform console serial
+!
+hostname HUB1
+!
+boot-start-marker
+boot-end-marker
+!
+!
+vrf definition Mgmt-intf
+ !
+ address-family ipv4
+ exit-address-family
+ !
+ address-family ipv6
+ exit-address-family
+!
+enable secret 4 tnhtc92DXBhelxjYk8LWJrPV36S2i4ntXrpb4RFmfqY
+enable password cisco
+!
+aaa new-model
+!
+!
+aaa authorization network AUTHZ local 
+!
+!
+!
+!
+!
+aaa session-id common
+!
+!
+!
+!
+!
+!
+!
+no ip domain lookup
+ip domain name virl.info
+ip admission watch-list expiry-time 0
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+! 
+! 
+! 
+! 
+!
+ipv6 unicast-routing
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+crypto pki trustpoint TP-self-signed-2005624913
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-2005624913
+ revocation-check none
+ rsakeypair TP-self-signed-2005624913
+!
+!
+crypto pki certificate chain TP-self-signed-2005624913
+ certificate self-signed 01 nvram:IOS-Self-Sig#1.cer
+!
+!
+!
+!
+!
+!
+!
+!
+license udi pid CSR1000V sn 993AICVR37C
+license accept end user agreement
+no license smart enable
+diagnostic bootup level minimal
+!
+spanning-tree extend system-id
+!
+!
+!
+username cisco privilege 15 secret 5 $1$mnki$tSeJUQpF2AoQKqQNcm7jB.
+!
+redundancy
+!
+crypto ikev2 authorization policy FVPN-AUTHZ 
+ route set interface
+!
+!
+!
+crypto ikev2 keyring DMVPN-KEY
+ peer dmvpn-peers
+  address 0.0.0.0 0.0.0.0
+  identity address 0.0.0.0
+  pre-shared-key CISCO123
+ !
+!
+!
+crypto ikev2 profile FVPN-IKE2-PR
+ match identity remote any
+ authentication remote pre-share
+ authentication local pre-share
+ keyring local DMVPN-KEY
+ aaa authorization group psk list AUTHZ FVPN-AUTHZ
+ virtual-template 1
+!
+!
+!
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+crypto ipsec profile default
+ set ikev2-profile FVPN-IKE2-PR
+!
+!
+!
+!
+!
+! 
+! 
+!
+!
+interface Loopback0
+ description Loopback
+ ip address 192.168.0.1 255.255.255.255
+!
+interface Loopback1
+ ip address 172.16.0.1 255.255.255.0
+!
+interface Tunnel0
+ no ip address
+!
+interface GigabitEthernet1
+ description OOB Management
+ vrf forwarding Mgmt-intf
+ ip address 10.255.0.27 255.255.0.0
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+interface GigabitEthernet2
+ description to Internet
+ ip address 10.0.0.5 255.255.255.252
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+interface Virtual-Template1 type tunnel
+ ip unnumbered Loopback1
+ ip nhrp network-id 100
+ ip nhrp redirect
+ tunnel protection ipsec profile default
+!
+!
+router eigrp as100
+ !
+ address-family ipv4 unicast autonomous-system 100
+  !
+  topology base
+  exit-af-topology
+  network 172.16.0.0 0.0.0.255
+  network 192.168.0.0
+ exit-address-family
+!
+ip forward-protocol nd
+ip http server
+ip http authentication local
+ip http secure-server
+ip route 0.0.0.0 0.0.0.0 10.0.0.6
+!
+ip ssh server algorithm authentication password
+!
+!
+!
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+line con 0
+ password cisco
+ stopbits 1
+line vty 0 4
+ exec-timeout 720 0
+ password cisco
+ transport input telnet ssh
+!
+!
+!
+!
+!
+!
+end
+
+</entry>
+        </extensions>
+        <interface id="0" name="GigabitEthernet2" ipv4="10.0.0.5" netPrefixLenV4="30"/>
+    </node>
+    <node name="Spoke1" type="SIMPLE" subtype="CSR1000v" location="277,258" ipv4="192.168.0.11">
+        <extensions>
+            <entry key="AutoNetkit.mgmt_ip" type="string"></entry>
+            <entry key="config" type="String">!
+! Last configuration change at 23:47:15 UTC Tue Jun 9 2020 by cisco
+!
+version 16.9
+service timestamps debug datetime msec
+service timestamps log datetime msec
+platform qfp utilization monitor load 80
+no platform punt-keepalive disable-kernel-core
+platform console serial
+!
+hostname Spoke1
+!
+boot-start-marker
+boot-end-marker
+!
+!
+vrf definition Mgmt-intf
+ !
+ address-family ipv4
+ exit-address-family
+ !
+ address-family ipv6
+ exit-address-family
+!
+enable secret 4 tnhtc92DXBhelxjYk8LWJrPV36S2i4ntXrpb4RFmfqY
+enable password cisco
+!
+aaa new-model
+!
+!
+aaa authorization network AUTHZ local 
+!
+!
+!
+!
+!
+aaa session-id common
+!
+!
+!
+!
+!
+!
+!
+no ip domain lookup
+ip domain name virl.info
+ip admission watch-list expiry-time 0
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+! 
+! 
+! 
+! 
+!
+ipv6 unicast-routing
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+crypto pki trustpoint TP-self-signed-984841102
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-984841102
+ revocation-check none
+ rsakeypair TP-self-signed-984841102
+!
+!
+crypto pki certificate chain TP-self-signed-984841102
+ certificate self-signed 01 nvram:IOS-Self-Sig#1.cer
+!
+!
+!
+!
+!
+!
+!
+!
+license udi pid CSR1000V sn 9400SY6MM1W
+license accept end user agreement
+no license smart enable
+diagnostic bootup level minimal
+!
+spanning-tree extend system-id
+!
+!
+!
+username cisco privilege 15 secret 5 $1$mf7/$msf5ww17UBSN.SY/rOvoq/
+!
+redundancy
+!
+crypto ikev2 authorization policy FVPN-AUTHZ 
+ route set interface
+!
+!
+!
+crypto ikev2 keyring DMVPN-KEY
+ peer dmvpn-peers
+  address 0.0.0.0 0.0.0.0
+  identity address 0.0.0.0
+  pre-shared-key CISCO123
+ !
+!
+!
+crypto ikev2 profile FVPN-IKE2-PR
+ match identity remote any
+ authentication remote pre-share
+ authentication local pre-share
+ keyring local DMVPN-KEY
+ aaa authorization group psk list AUTHZ FVPN-AUTHZ
+ virtual-template 1
+!
+!
+!
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+crypto ipsec profile default
+ set ikev2-profile FVPN-IKE2-PR
+!
+!
+!
+!
+!
+! 
+! 
+!
+!
+interface Loopback0
+ description Loopback
+ ip address 192.168.0.11 255.255.255.255
+!
+interface Tunnel0
+ ip address 172.16.0.11 255.255.255.0
+ ip nhrp network-id 100
+ ip nhrp shortcut virtual-template 1
+ tunnel source GigabitEthernet2
+ tunnel destination 10.0.0.5
+ tunnel protection ipsec profile default
+!
+interface GigabitEthernet1
+ description OOB Management
+ vrf forwarding Mgmt-intf
+ ip address 10.255.0.29 255.255.0.0
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+interface GigabitEthernet2
+ description to Internet
+ ip address 10.0.0.10 255.255.255.252
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+interface Virtual-Template1 type tunnel
+ ip unnumbered Tunnel0
+ ip nhrp network-id 100
+ ip nhrp shortcut virtual-template 1
+ tunnel protection ipsec profile default
+!
+!
+router eigrp as100
+ !
+ address-family ipv4 unicast autonomous-system 100
+  !
+  topology base
+  exit-af-topology
+  network 172.16.0.0 0.0.0.255
+  network 192.168.0.0
+ exit-address-family
+!
+ip forward-protocol nd
+ip http server
+ip http authentication local
+ip http secure-server
+ip route 0.0.0.0 0.0.0.0 10.0.0.9
+!
+ip ssh server algorithm authentication password
+!
+!
+!
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+line con 0
+ password cisco
+ stopbits 1
+line vty 0 4
+ exec-timeout 720 0
+ password cisco
+ transport input telnet ssh
+!
+!
+!
+!
+!
+!
+end
+
+</entry>
+        </extensions>
+        <interface id="0" name="GigabitEthernet2" ipv4="10.0.0.10" netPrefixLenV4="30"/>
+    </node>
+    <node name="Spoke2" type="SIMPLE" subtype="CSR1000v" location="457,307" ipv4="192.168.0.12">
+        <extensions>
+            <entry key="AutoNetkit.mgmt_ip" type="string"></entry>
+            <entry key="config" type="String">!
+! Last configuration change at 10:29:30 UTC Wed Jun 10 2020 by cisco
+!
+version 16.9
+service timestamps debug datetime msec
+service timestamps log datetime msec
+platform qfp utilization monitor load 80
+no platform punt-keepalive disable-kernel-core
+platform console serial
+!
+hostname Spoke2
+!
+boot-start-marker
+boot-end-marker
+!
+!
+vrf definition Mgmt-intf
+ !
+ address-family ipv4
+ exit-address-family
+ !
+ address-family ipv6
+ exit-address-family
+!
+enable secret 4 tnhtc92DXBhelxjYk8LWJrPV36S2i4ntXrpb4RFmfqY
+enable password cisco
+!
+aaa new-model
+!
+!
+aaa authorization network AUTHZ local 
+!
+!
+!
+!
+!
+aaa session-id common
+!
+!
+!
+!
+!
+!
+!
+no ip domain lookup
+ip domain name virl.info
+ip admission watch-list expiry-time 0
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+! 
+! 
+! 
+! 
+!
+ipv6 unicast-routing
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+crypto pki trustpoint TP-self-signed-3013299751
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-3013299751
+ revocation-check none
+ rsakeypair TP-self-signed-3013299751
+!
+!
+crypto pki certificate chain TP-self-signed-3013299751
+ certificate self-signed 01 nvram:IOS-Self-Sig#1.cer
+!
+!
+!
+!
+!
+!
+!
+!
+license udi pid CSR1000V sn 9NJGYB0F49F
+license accept end user agreement
+no license smart enable
+diagnostic bootup level minimal
+!
+spanning-tree extend system-id
+!
+!
+!
+username cisco privilege 15 secret 5 $1$FAzY$CaXeh3QAp/YzarmI1zeXt0
+!
+redundancy
+!
+crypto ikev2 authorization policy FVPN-AUTHZ 
+ route set interface
+!
+!
+!
+crypto ikev2 keyring DMVPN-KEY
+ peer dmvpn-peers
+  address 0.0.0.0 0.0.0.0
+  identity address 0.0.0.0
+  pre-shared-key CISCO123
+ !
+!
+!
+crypto ikev2 profile FVPN-IKE2-PR
+ match identity remote any
+ authentication remote pre-share
+ authentication local pre-share
+ keyring local DMVPN-KEY
+ aaa authorization group psk list AUTHZ FVPN-AUTHZ
+ virtual-template 1
+!
+!
+!
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+crypto ipsec profile default
+ set ikev2-profile FVPN-IKE2-PR
+!
+!
+!
+!
+!
+! 
+! 
+!
+!
+interface Loopback0
+ description Loopback
+ ip address 192.168.0.12 255.255.255.255
+!
+interface Tunnel0
+ ip address 172.16.0.12 255.255.255.0
+ ip nhrp network-id 100
+ ip nhrp shortcut virtual-template 3
+ tunnel source GigabitEthernet2
+ tunnel destination 10.0.0.5
+ tunnel protection ipsec profile default
+!
+interface GigabitEthernet1
+ description OOB Management
+ vrf forwarding Mgmt-intf
+ ip address 10.255.0.30 255.255.0.0
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+interface GigabitEthernet2
+ description to Internet
+ ip address 10.0.0.14 255.255.255.252
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+interface Virtual-Template1
+ no ip address
+!
+interface Virtual-Template2
+ no ip address
+!
+interface Virtual-Template3 type tunnel
+ ip unnumbered Tunnel0
+ ip nhrp network-id 100
+ ip nhrp shortcut virtual-template 3
+ tunnel protection ipsec profile default
+!
+!
+router eigrp as100
+ !
+ address-family ipv4 unicast autonomous-system 100
+  !
+  topology base
+  exit-af-topology
+  network 172.16.0.0 0.0.0.255
+  network 192.168.0.0
+ exit-address-family
+!
+ip forward-protocol nd
+ip http server
+ip http authentication local
+ip http secure-server
+ip route 0.0.0.0 0.0.0.0 10.0.0.13
+!
+ip ssh server algorithm authentication password
+!
+!
+!
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+line con 0
+ password cisco
+ stopbits 1
+line vty 0 4
+ exec-timeout 720 0
+ password cisco
+ transport input telnet ssh
+!
+!
+!
+!
+!
+!
+end
+
+</entry>
+        </extensions>
+        <interface id="0" name="GigabitEthernet2" ipv4="10.0.0.14" netPrefixLenV4="30"/>
+    </node>
+    <node name="Spoke3" type="SIMPLE" subtype="CSR1000v" location="633,249" ipv4="192.168.0.13">
+        <extensions>
+            <entry key="AutoNetkit.mgmt_ip" type="string"></entry>
+            <entry key="config" type="String">!
+! Last configuration change at 23:47:15 UTC Tue Jun 9 2020 by cisco
+!
+version 16.9
+service timestamps debug datetime msec
+service timestamps log datetime msec
+platform qfp utilization monitor load 80
+no platform punt-keepalive disable-kernel-core
+platform console serial
+!
+hostname Spoke3
+!
+boot-start-marker
+boot-end-marker
+!
+!
+vrf definition Mgmt-intf
+ !
+ address-family ipv4
+ exit-address-family
+ !
+ address-family ipv6
+ exit-address-family
+!
+enable secret 4 tnhtc92DXBhelxjYk8LWJrPV36S2i4ntXrpb4RFmfqY
+enable password cisco
+!
+aaa new-model
+!
+!
+aaa authorization network AUTHZ local 
+!
+!
+!
+!
+!
+aaa session-id common
+!
+!
+!
+!
+!
+!
+!
+no ip domain lookup
+ip domain name virl.info
+ip admission watch-list expiry-time 0
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+! 
+! 
+! 
+! 
+!
+ipv6 unicast-routing
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+crypto pki trustpoint TP-self-signed-646596639
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-646596639
+ revocation-check none
+ rsakeypair TP-self-signed-646596639
+!
+!
+crypto pki certificate chain TP-self-signed-646596639
+ certificate self-signed 01 nvram:IOS-Self-Sig#1.cer
+!
+!
+!
+!
+!
+!
+!
+!
+license udi pid CSR1000V sn 9Z774BSB911
+license accept end user agreement
+no license smart enable
+diagnostic bootup level minimal
+!
+spanning-tree extend system-id
+!
+!
+!
+username cisco privilege 15 secret 5 $1$UxE.$7bTsvDSDsNKzSoVcb8N0T/
+!
+redundancy
+!
+crypto ikev2 authorization policy FVPN-AUTHZ 
+ route set interface
+!
+!
+!
+crypto ikev2 keyring DMVPN-KEY
+ peer dmvpn-peers
+  address 0.0.0.0 0.0.0.0
+  identity address 0.0.0.0
+  pre-shared-key CISCO123
+ !
+!
+!
+crypto ikev2 profile FVPN-IKE2-PR
+ match identity remote any
+ authentication remote pre-share
+ authentication local pre-share
+ keyring local DMVPN-KEY
+ aaa authorization group psk list AUTHZ FVPN-AUTHZ
+!
+!
+!
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+crypto ipsec profile default
+ set ikev2-profile FVPN-IKE2-PR
+!
+!
+!
+!
+!
+! 
+! 
+!
+!
+interface Loopback0
+ description Loopback
+ ip address 192.168.0.13 255.255.255.255
+!
+interface Tunnel0
+ ip address 172.16.0.13 255.255.255.0
+ ip nhrp network-id 100
+ ip nhrp shortcut virtual-template 1
+ tunnel source GigabitEthernet2
+ tunnel destination 10.0.0.5
+ tunnel protection ipsec profile default
+!
+interface GigabitEthernet1
+ description OOB Management
+ vrf forwarding Mgmt-intf
+ ip address 10.255.0.31 255.255.0.0
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+interface GigabitEthernet2
+ description to Internet
+ ip address 10.0.0.18 255.255.255.252
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+interface Virtual-Template1 type tunnel
+ ip unnumbered Tunnel0
+ ip nhrp network-id 100
+ ip nhrp shortcut virtual-template 1
+ tunnel protection ipsec profile default
+!
+!
+router eigrp as100
+ !
+ address-family ipv4 unicast autonomous-system 100
+  !
+  topology base
+  exit-af-topology
+  network 172.16.0.0 0.0.0.255
+  network 192.168.0.0
+ exit-address-family
+!
+ip forward-protocol nd
+ip http server
+ip http authentication local
+ip http secure-server
+ip route 0.0.0.0 0.0.0.0 10.0.0.17
+!
+ip ssh server algorithm authentication password
+!
+!
+!
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+line con 0
+ password cisco
+ stopbits 1
+line vty 0 4
+ exec-timeout 720 0
+ password cisco
+ transport input telnet ssh
+!
+!
+!
+!
+!
+!
+end
+
+</entry>
+        </extensions>
+        <interface id="0" name="GigabitEthernet2" ipv4="10.0.0.18" netPrefixLenV4="30"/>
+    </node>
+    <node name="Internet" type="SIMPLE" subtype="IOSv" location="455,169" ipv4="192.168.0.5">
+        <extensions>
+            <entry key="AutoNetkit.mgmt_ip" type="string"></entry>
+            <entry key="config" type="String">!
+version 15.7
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname Internet
+!
+boot-start-marker
+boot-end-marker
+!
+!
+vrf definition Mgmt-intf
+ !
+ address-family ipv4
+ exit-address-family
+ !
+ address-family ipv6
+ exit-address-family
+!
+enable password cisco
+!
+no aaa new-model
+!
+!
+!
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+no ip domain lookup
+ip domain name virl.info
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+username cisco privilege 15 secret 5 $1$I6ix$PjC2ZXyXSZJCFwRtq3FkR1
+!
+redundancy
+!
+no cdp run
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ description Loopback
+ ip address 192.168.0.5 255.255.255.255
+!
+interface GigabitEthernet0/0
+ description OOB Management
+ vrf forwarding Mgmt-intf
+ ip address 10.255.0.28 255.255.0.0
+ duplex full
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/1
+ description to HUB1
+ ip address 10.0.0.6 255.255.255.252
+ duplex full
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/2
+ description to Spoke1
+ ip address 10.0.0.9 255.255.255.252
+ duplex full
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/3
+ description to Spoke2
+ ip address 10.0.0.13 255.255.255.252
+ duplex full
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/4
+ description to Spoke3
+ ip address 10.0.0.17 255.255.255.252
+ duplex full
+ speed auto
+ media-type rj45
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip ssh server algorithm authentication password
+!
+ipv6 ioam timestamp
+!
+!
+!
+control-plane
+!
+banner exec `
+**************************************************************************
+* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
+* education. IOSv is provided as-is and is not supported by Cisco's      *
+* Technical Advisory Center. Any use or disclosure, in whole or in part, *
+* of the IOSv Software or Documentation to any third party for any       *
+* purposes is expressly prohibited except as otherwise authorized by     *
+* Cisco in writing.                                                      *
+**************************************************************************`
+banner incoming `
+**************************************************************************
+* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
+* education. IOSv is provided as-is and is not supported by Cisco's      *
+* Technical Advisory Center. Any use or disclosure, in whole or in part, *
+* of the IOSv Software or Documentation to any third party for any       *
+* purposes is expressly prohibited except as otherwise authorized by     *
+* Cisco in writing.                                                      *
+**************************************************************************`
+banner login `
+**************************************************************************
+* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
+* education. IOSv is provided as-is and is not supported by Cisco's      *
+* Technical Advisory Center. Any use or disclosure, in whole or in part, *
+* of the IOSv Software or Documentation to any third party for any       *
+* purposes is expressly prohibited except as otherwise authorized by     *
+* Cisco in writing.                                                      *
+**************************************************************************`
+!
+line con 0
+ password cisco
+line aux 0
+line vty 0 4
+ exec-timeout 720 0
+ password cisco
+ login local
+ transport input telnet ssh
+!
+no scheduler allocate
+!
+end
+
+</entry>
+        </extensions>
+        <interface id="0" name="GigabitEthernet0/1" ipv4="10.0.0.6" netPrefixLenV4="30"/>
+        <interface id="1" name="GigabitEthernet0/2" ipv4="10.0.0.9" netPrefixLenV4="30"/>
+        <interface id="2" name="GigabitEthernet0/3" ipv4="10.0.0.13" netPrefixLenV4="30"/>
+        <interface id="3" name="GigabitEthernet0/4" ipv4="10.0.0.17" netPrefixLenV4="30"/>
+    </node>
+    <annotations/>
+    <connection dst="/virl:topology/virl:node[5]/virl:interface[1]" src="/virl:topology/virl:node[1]/virl:interface[1]"/>
+    <connection dst="/virl:topology/virl:node[2]/virl:interface[1]" src="/virl:topology/virl:node[5]/virl:interface[2]"/>
+    <connection dst="/virl:topology/virl:node[3]/virl:interface[1]" src="/virl:topology/virl:node[5]/virl:interface[3]"/>
+    <connection dst="/virl:topology/virl:node[4]/virl:interface[1]" src="/virl:topology/virl:node[5]/virl:interface[4]"/>
+</topology>
